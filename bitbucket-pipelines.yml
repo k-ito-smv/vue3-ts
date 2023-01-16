@@ -1,0 +1,32 @@
+image: node:16.14.2
+
+pipelines:
+  pull-requests:
+    feature/*:
+      - step:
+          name: Install dependencies
+          script:
+            - yarn install
+          caches:
+            - node
+      - parallel:
+          - step:
+              name: Lint
+              caches:
+                - node
+              script:
+                - yarn lint:script
+                - yarn lint:style
+                - yarn lint:prettier
+          - step:
+              name: Check types
+              caches:
+                - node
+              script:
+                - yarn typecheck
+          - step:
+              name: Test
+              caches:
+                - node
+              script:
+                - yarn test:ci
